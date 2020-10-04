@@ -14,13 +14,16 @@ fn main() {
             .help("Port to run the daemon on (6600 by default)")
             .takes_value(true))
         .arg(Arg::with_name("verbose")
-            .help("Enables verbose output (useful for debugging)")) 
+            .short("v")
+            .long("verbose")
+            .help("Enables verbose output (useful for debugging)")
+            .takes_value(false))
         .get_matches();
 
     // Bind to port
     let port = args.value_of("port").unwrap_or("6600");
     let listener = TcpListener::bind(format!("127.0.0.1:{}", port)).unwrap();
-    println!("MPDRS running on port {}", port);
+    println!("MPDRS started on port {}", port);
 
     for stream in listener.incoming() {
         // Spawn worker thread
