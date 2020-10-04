@@ -1,7 +1,9 @@
+/// Contains functions for receiving, parsing, and sending messages over the connection
 pub mod messages {
     use std::io::{Read, Write};
     use std::net::{TcpStream};
 
+    /// Handles messages
     pub fn handle_client(mut stream: TcpStream) {
         // All data between client and server is UTF-8 encoded
         let mut data = [0; 1024];
@@ -40,7 +42,7 @@ pub mod messages {
         }
     }
 
-    // Handles command, returns true if program should remain in command mode
+    /// Handles command, returns true if program should remain in command mode
     fn handle_command(command: &str) -> bool {
         match command {
             // Exit command list mode
@@ -56,15 +58,9 @@ pub mod messages {
         }
     }
 
-    // Sends a message
+    /// Sends a message
     fn send(stream: &mut TcpStream, message: &str) {
         stream.write(message.as_bytes()).unwrap();
         stream.flush().unwrap();
     }
-}
-
-pub mod io {
-    // fn debug_print() {
-    //     k
-    // }
 }
