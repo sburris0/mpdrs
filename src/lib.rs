@@ -22,10 +22,11 @@ pub mod messages {
 
             // Switch to another handler if in a command list block
             if cmd_list_mode {
-                cmd_list_mode = handle_command(line);
-                send(&mut stream, "OK\n")
+                cmd_list_mode = handle_command(&mut stream, line);
+                send(&mut stream, "list_OK\n");
 
             } else {
+                // send(&mut stream, "OK\n");
                 match line {
                     // Enter or exit command list block
                     "command_list_ok_begin" => {
@@ -37,7 +38,8 @@ pub mod messages {
                         stdout::print_mpdrs("Exiting command mode from client handler");
                         cmd_list_mode = false;
                     },
-
+                    // "play" => {
+                    // }
                     // Everything else
                     _ => stdout::print_mpdrs("Unhandled message received."),
                 }
@@ -46,19 +48,19 @@ pub mod messages {
     }
 
     /// Handles command, returns true if program should remain in command mode
-    fn handle_command(command: &str) -> bool {
+    fn handle_command(_stream: &mut TcpStream, command: &str) -> bool {
         match command {
             // Exit command list mode
             "command_list_end" => {
                 stdout::print_mpdrs("Exiting command mode");
-                return false
             },
-            // "status" => println!("GOT STATUS COMMAND"),
+            // "status" => send(stream, "PRETTY GOOD HOW ABOUT YOU"),
             _ => {
                 stdout::print_mpdrs("Unhandled command received.");
                 return true
             }
         }
+        return false
     }
 
     /// Sends a message
