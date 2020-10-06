@@ -1,7 +1,9 @@
 /// Contains functions for receiving, parsing, and sending messages over the connection
 pub mod messages {
-    use std::io::{Read, Write};
+    use std::io::{BufReader, Read, Write};
     use std::net::{TcpStream};
+    use std::fs::File;
+    use rodio::Source;
     use super::stdout;
 
     /// Handles messages
@@ -38,8 +40,16 @@ pub mod messages {
                         stdout::print_mpdrs("Exiting command mode from client handler");
                         cmd_list_mode = false;
                     },
-                    // "play" => {
-                    // }
+                    "play" => {
+                        stdout::print_mpdrs("Playing song...");
+                        let (_mstream, stream_handle) = rodio::OutputStream::try_default().unwrap();
+                        // Load a sound from a file, using a path relative to Cargo.toml
+                        let file = File::open("test.mp3").unwrap();
+                        let source = rodio::Decoder::new(BufReader::new(file)).unwrap();
+                        stream_handle.play_raw(source.convert_samples()).unwrap();
+                    }
+                    "channels" => send(&mut stream, "channel:\nmain\n"),
+                    "playlistinfo" => send(&mut stream, "Bill Nye the Science Guy\n"),
                     // Everything else
                     _ => stdout::print_mpdrs("Unhandled message received."),
                 }
