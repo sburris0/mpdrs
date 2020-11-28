@@ -42,11 +42,12 @@ pub mod messages {
                     },
                     "play" => {
                         stdout::print_mpdrs("Playing song...");
-                        let (_mstream, stream_handle) = rodio::OutputStream::try_default().unwrap();
+                        let (_stream, stream_handle) = rodio::OutputStream::try_default().unwrap();
                         // Load a sound from a file, using a path relative to Cargo.toml
                         let file = File::open("test.mp3").unwrap();
                         let source = rodio::Decoder::new(BufReader::new(file)).unwrap();
                         stream_handle.play_raw(source.convert_samples()).unwrap();
+                        loop {}
                     }
                     "channels" => send(&mut stream, "channel:\nmain\n"),
                     "playlistinfo" => send(&mut stream, "Bill Nye the Science Guy\n"),
